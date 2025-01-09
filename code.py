@@ -21,8 +21,7 @@ class EpidemicSimulation:
             self.graph.nodes[node]['state'] = 'Susceptible'
             self.graph.nodes[node]['recovery_time'] = 0
             self.graph.nodes[node]['susceptible_time'] = 0
-        ##gestione di una nuova simulazione con gli stessi stati iniziali
-        print("Nodi infetti inizialmente:", starting_infected_nodes, "\n")
+        print("Initially infected nodes", starting_infected_nodes, "\n")
         for node in starting_infected_nodes:
             self.graph.nodes[node]['state'] = 'Infected'
 
@@ -42,7 +41,7 @@ class EpidemicSimulation:
 
             elif state == 'Recovered':
                 if self.tSUS == float('inf'):
-                    continue  # Il nodo non tornerà mai Susceptible
+                    continue  # Node will never become susceptible again
                 elif self.graph.nodes[node]['susceptible_time'] == self.tSUS - 1:
                     self.graph.nodes[node]['state'] = 'Susceptible'
                     self.graph.nodes[node]['susceptible_time'] = 0
@@ -50,8 +49,7 @@ class EpidemicSimulation:
                     self.graph.nodes[node]['susceptible_time'] += 1
 
             elif state == 'Susceptible':
-                infected_neighbors = [n for n in self.graph.neighbors(node) if
-                                      self.graph.nodes[n]['state'] == 'Infected']
+                infected_neighbors = [n for n in self.graph.neighbors(node) if self.graph.nodes[n]['state'] == 'Infected']
                 for neighbor in infected_neighbors:
                     if random.random() <= self.ptrans and neighbor not in new_infected_nodes:
                         self.graph.nodes[node]['state'] = 'Infected'
@@ -69,18 +67,18 @@ class EpidemicSimulation:
             self.visualize(step)
             step += 1
             if step == 100:
-                print("\nNumero massimo di step raggiunto. La simulazione è stata interrotta.\n")
+                print("\nMaximum number of steps reached. The simulation has been interrupted.\n")
                 break
 
         max_infections = max(self.infection_counts.values())
         superspreaders = [node for node, count in self.infection_counts.items() if count == max_infections]
         if step < 100:
-            print("\nSimulazione terminata allo step ",step,", non ci sono più nodi infetti.\n")
-        print("\033[1mDati simulazione:\nNodi infetti inizialmente:\033[0m ", starting_infected_nodes, "\n\033[1mProbabilità Infezione:\033[0m ", ptrans*100, "% | \033[1mStep Guarigione:\033[0m ", tREC, " | \033[1mStep Immunità:\033[0m ", tSUS)
+            print("\nSimulation ended at step ",step,", there aren't any infected nodes.\n")
+        print("\033[1mSimulation Data:\nStarting infected nodes:\033[0m ", starting_infected_nodes, "\n\033[1mInfection probability:\033[0m ", ptrans*100, "% | \033[1mRecovery Steps:\033[0m ", tREC, " | \033[1mImmunity Steps:\033[0m ", tSUS)
         if(max_infections==0):
-            print("Nessun superspreader: 0 infezioni totali.")
+            print("No superspreader: 0 total infections.")
         else:
-            print("\033[1mSuperspreaders\033[0m (",max_infections," infezioni ): ",superspreaders, "\n")
+            print("\033[1mSuperspreaders\033[0m (",max_infections," infections ): ",superspreaders, "\n")
 
     def all_nodes_susceptible(self):
         for node in self.graph.nodes:
@@ -114,62 +112,62 @@ def load_graph_from_csv(csv_file):
 
 
 graph = load_graph_from_csv('test.csv')
-##input per n° infetti iniziali
+##input for the number of starting infected nodes
 while True:
     try:
-      n_infected = int(input("Inserire il numero di persone infette inizialmente: "))
+      n_infected = int(input("Input the number of starting infected nodes: "))
       if n_infected > graph.number_of_nodes():
-        print("Il valore del numero di infetti non può essere superiore a quello degli utenti.")
+        print("The number of infected cannot exceed the number of nodes.")
         continue
       elif n_infected < 0:
-        print("Il valore del numero di infetti non può essere negativo.")
+        print("The number of infected nodes cannot be negative.")
         continue
       break
     except ValueError or TypeError:
-        print("Il valore inserito non è un numero intero.")
+        print("The value entered is not an integer.")
 
-starting_infected_nodes = random.sample(list(graph.nodes), n_infected)
-new_simulation= 'n' #variabile per l'avvio di nuove simulazioni
-mod_val = 'n' #variabile per modifica delle variabili iniziali
+starting_infected_nodes = random.sample(list(graph.nodes), n_infected) #randomly defining starting infected nodes 
+new_simulation= 'n' #variable for starting new simulations
+mod_val = 'n' #variabile for editing initial values
 
 while True:
     if new_simulation=='n' or mod_val=='y':
-        ##input per probabilità di infezione
+        ##input probability of infection
         while True:
           try:
-            ptrans = float(input("Inserire la probabilità (in percentuale) di infezione del proprio vicino: "))
+            ptrans = float(input("Enter the probability (in percentage) of infection of the neighbours: "))
             if ptrans > 100 or ptrans < 0:
-              print("La probabilità d'infezione dev'essere compresa tra 0 e 100.")
+              print("The probability of infection must be between 0 and 100.")
               continue
             break
           except ValueError or TypeError:
-            print("Il valore inserito non è valido.")
+            print("The value entered is invalid.")
         ptrans = ptrans / 100
-        ##input step per la guarigione
+        ##input step for recovery
         while True:
             try:
-              tREC = int(input("Inserire il numero di step per la guarigione "))
+              tREC = int(input("Enter the number of steps for recovery: "))
               if tREC <= 0:
-                print("Il numero di step deve essere maggiore di 0.")
+                print("The number of steps must be greater than 0.")
                 continue
               break
             except ValueError or TypeError:
-                print("Il valore inserito non è un numero intero.")
-        ##input step per tornare vulnerabili
+                print("The value entered is not an integer.")
+        ##input step for immunity
         while True:
-          tSUS_input = input("Inserire il numero di step per diventare nuovamente vulnerabili ('?' per infinito): ")
+          tSUS_input = input("Enter the number of steps to become vulnerable again (‘?’ for infinity): ")
           if tSUS_input == '?':
               tSUS = float('inf')
               break
           else:
             try:
               tSUS = int(tSUS_input)
-              if tSUS <= 0:
-                  print("Il numero di step deve essere maggiore di 0.")
+              if tSUS < 0:
+                  print("The number of steps must be greater than or equal to 0.")
               else:
                   break
             except ValueError or TypeError:
-                print("Il valore inserito non è un numero intero.")
+                print("The value entered is not an integer.")
 
 
     ##avvio della simulazione
@@ -177,17 +175,17 @@ while True:
     simulation.run_simulation()
 
     while True:
-        new_simulation = input("Vuoi avviare una nuova simulazione con gli stessi stati iniziali dei nodi? y/n ")
+        new_simulation = input("Do you want to start a new simulation with the same initial states of the nodes? y/n: ")
         if new_simulation in ['y', 'n']:
             break
         else:
-            print("Valore non valido. Inserire 'y' o 'n'.")
+            print("Invalid value. Enter ‘y’ or ‘n’.")
     if new_simulation == 'y':
         while True:
-          mod_val = input("Vuoi modificare i valori delle variabili? y/n ")
+          mod_val = input("Do you want to change the values of the variables? y/n: ")
           if mod_val in ['y', 'n']:
             break
           else:
-            print("Valore non valido. Inserire 'y' o 'n'.")
+            print("Invalid value. Enter ‘y’ or ‘n’.")
     else:
         break
