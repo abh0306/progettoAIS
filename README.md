@@ -1,19 +1,85 @@
-Epidemic Simulation
+Epidemic Simulation on Graphs
 
-This project implements an epidemic simulation model on networks using Python, NetworkX, and Matplotlib.
-It allows users to simulate how an infection spreads across a network of connected nodes, with customizable parameters such as infection probability, recovery time, and immunity duration.
+This project implements an epidemic simulation on graphs using NetworkX
+.
+The model follows infection, recovery, and return-to-susceptibility dynamics, and visualizes the epidemic evolution with Matplotlib
+.
 
-The simulation is visualized step by step on a graph, where each node represents an individual and edges represent possible transmission paths.
+🚀 Features
 
-✨ Features
-	•	🦠 Customizable epidemic model
-	•	Infection probability (ptrans)
-	•	Recovery time (tREC)
-	•	Immunity duration (tSUS) – can also be infinite
-	•	🎲 Random initial infections – select the number of initially infected nodes randomly from the network
-	•	📊 Tracking infection spread – count infections per node and identify superspreaders
-	•	🎨 Graph visualization – animated step-by-step simulation with color-coded states:
-	•	🟢 Susceptible
-	•	🔴 Infected
-	•	🟠 Recovered
-	•	📂 CSV-based graph loading – define the network edges in a .csv file
+Load a graph from a .csv edge list file.
+
+Random selection of initially infected nodes.
+
+Customizable parameters:
+
+Infection probability (ptrans)
+
+Number of steps to recover (tREC)
+
+Number of steps of immunity (tSUS, with option for infinity ?)
+
+Step-by-step visualization with node colors:
+
+🟩 Susceptible
+
+🟥 Infected
+
+🟧 Recovered
+
+Final statistics:
+
+Infection count per node
+
+Identification of potential superspreaders
+
+Option to restart simulations with the same or new parameters.
+
+📊 CSV file format
+
+The graph is defined by an edge list with headers source and target.
+Example (test.csv):
+
+source,target
+1,2
+2,3
+3,4
+4,5
+2,5
+
+▶️ Usage
+
+Clone the repository:
+
+git clone https://github.com/your-username/epidemic-simulation.git
+cd epidemic-simulation
+
+
+Install dependencies:
+
+pip install networkx matplotlib pandas
+
+
+Run the script:
+
+python epidemic_simulation.py
+
+
+🛠️ Technologies
+
+Python 3.x
+
+NetworkX
+ → graph management
+
+Matplotlib
+ → visualization
+
+Pandas
+ → CSV file handling
+
+📌 Notes
+
+The simulation ends when there are no infected nodes left or after 100 steps (to prevent infinite loops).
+
+If no node spreads the infection, there are no superspreaders.
