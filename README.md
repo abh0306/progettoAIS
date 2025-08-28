@@ -58,7 +58,7 @@ Run the script:
 python epidemic_simulation.py
    ```
 
-🛠️ Technologies
+## Technologies
 
 Python 3.x
 
@@ -71,7 +71,7 @@ Matplotlib
 Pandas
  → CSV file handling
 
-📌 Notes
+ ## Notes
 
 The simulation ends when there are no infected nodes left or after 100 steps (to prevent infinite loops).
 
